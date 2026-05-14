@@ -18,11 +18,15 @@ class Patient extends Model
         'date_of_birth',
         'address',
         'medical_history',
+        'blood_type',
+        'allergies',
+        'last_visit',
         'created_at',
     ];
 
     protected $casts = [
         'date_of_birth' => 'date',
+        'last_visit' => 'date',
         'created_at' => 'datetime',
     ];
 

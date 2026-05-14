@@ -11,3 +11,6 @@ Route::get('/patient/book-appointment/{doctorId?}', function (?int $doctorId = n
         'doctorId' => $doctorId,
     ]);
 })->whereNumber('doctorId');
+
+Route::view('/patient/record', 'patient.record');
+Route::view('/patient/profile', 'patient.record');

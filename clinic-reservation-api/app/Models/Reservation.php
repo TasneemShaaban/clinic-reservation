@@ -110,4 +110,16 @@ class Reservation extends Model
             ? $value->format('Y-m-d')
             : Carbon::parse($value)->format('Y-m-d');
     }
+
+    public function effectiveStatus(): string
+    {
+        $status = strtolower(trim((string) ($this->attributes['status'] ?? 'pending')));
+
+        return $status !== '' ? $status : 'pending';
+    }
+
+    public function canBeCancelled(): bool
+    {
+        return ! in_array($this->effectiveStatus(), ['cancelled', 'completed'], true);
+    }
 }

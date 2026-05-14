@@ -1,7 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.body.dataset.page !== 'patient-booking') {
-        return;
+    if (document.body.dataset.page === 'patient-booking') {
+        initPatientBooking();
     }
+
+    if (document.body.dataset.page === 'patient-record') {
+        initPatientRecord();
+    }
+});
+
+function initPatientBooking() {
 
     const state = {
         doctor: null,
@@ -526,4 +533,264 @@ document.addEventListener('DOMContentLoaded', () => {
             secondary: parts.slice(1).join(', ') || location,
         };
     }
-});
+}
+
+function initPatientRecord() {
+    const state = {
+        appointments: [],
+        selectedAppointment: null,
+        cancelling: false,
+    };
+
+    const els = {
+        feedback: document.getElementById('record-feedback'),
+        avatar: document.getElementById('patient-avatar'),
+        topAvatar: document.getElementById('record-avatar-top'),
+        patientName: document.getElementById('patient-summary-title'),
+        patientMrn: document.getElementById('patient-mrn'),
+        patientStatus: document.getElementById('patient-status'),
+        patientAge: document.getElementById('patient-age'),
+        patientDob: document.getElementById('patient-dob'),
+        patientEmail: document.getElementById('patient-email'),
+        patientPhone: document.getElementById('patient-phone'),
+        patientPhysician: document.getElementById('patient-physician'),
+        patientAddress: document.getElementById('patient-address'),
+        bloodType: document.getElementById('clinical-blood-type'),
+        allergies: document.getElementById('clinical-allergies'),
+        lastVisit: document.getElementById('clinical-last-visit'),
+        medicalHistory: document.getElementById('clinical-medical-history'),
+        prescriptions: document.getElementById('clinical-prescriptions'),
+        appointmentsBody: document.getElementById('appointments-table-body'),
+        appointmentsEmpty: document.getElementById('appointments-empty'),
+        appointmentsFooterCount: document.getElementById('appointments-footer-count'),
+        modal: document.getElementById('cancel-modal'),
+        modalSummary: document.getElementById('cancel-modal-summary'),
+        keepAppointment: document.getElementById('keep-appointment'),
+        confirmCancel: document.getElementById('confirm-cancel-appointment'),
+    };
+
+    els.keepAppointment.addEventListener('click', closeCancelModal);
+    els.confirmCancel.addEventListener('click', cancelSelectedAppointment);
+    document.querySelectorAll('[data-close-cancel-modal]').forEach((button) => {
+        button.addEventListener('click', closeCancelModal);
+    });
+
+    loadPatientRecord();
+
+    async function loadPatientRecord() {
+        try {
+            const response = await recordApiRequest('/api/patient/record');
+            const data = response.data || {};
+
+            renderPatient(data.patient || {});
+            renderClinicalIndicators(data.clinical_indicators || {});
+            state.appointments = data.appointments || [];
+            renderAppointments();
+        } catch (error) {
+            showRecordFeedback('warning', error.message || 'Unable to load patient record.');
+            renderEmptyAppointments('Unable to load appointments.');
+        }
+    }
+
+    function renderPatient(patient) {
+        const initials = patient.initials || initialsFromName(patient.name || 'Patient');
+
+        els.avatar.textContent = initials;
+        els.topAvatar.textContent = initials;
+        els.patientName.textContent = patient.name || 'Patient';
+        els.patientMrn.textContent = patient.mrn || 'MRN-DEMO';
+        els.patientStatus.textContent = patient.status_label || 'Active Patient';
+        els.patientAge.textContent = patient.age || 'Age not provided';
+        els.patientDob.textContent = patient.date_of_birth ? `DOB ${patient.date_of_birth}` : 'Date of birth not provided';
+        els.patientEmail.textContent = patient.email || 'patient@example.com';
+        els.patientPhone.textContent = patient.phone || 'Not provided';
+        els.patientPhysician.textContent = patient.primary_care_physician || 'Not assigned';
+        els.patientAddress.textContent = patient.address || 'Not provided';
+    }
+
+    function renderClinicalIndicators(indicators) {
+        els.bloodType.textContent = indicators.blood_type || 'O+';
+        els.allergies.textContent = indicators.allergies || 'No known allergies';
+        els.lastVisit.textContent = indicators.last_visit || 'No completed visits yet';
+        els.medicalHistory.textContent = indicators.medical_history || 'No chronic conditions recorded.';
+        els.prescriptions.textContent = indicators.prescription_info || 'No prescriptions recorded.';
+    }
+
+    function renderAppointments() {
+        els.appointmentsBody.innerHTML = '';
+
+        if (! state.appointments.length) {
+            renderEmptyAppointments('No appointments found yet.');
+            return;
+        }
+
+        els.appointmentsEmpty.classList.add('is-hidden');
+
+        state.appointments.forEach((appointment) => {
+            const row = document.createElement('tr');
+            const actionCell = document.createElement('td');
+            const cancelButton = document.createElement('button');
+            const doctorName = appointment.doctor_name || 'Assigned Doctor';
+
+            cancelButton.type = 'button';
+            cancelButton.className = 'appointment-action-button';
+            cancelButton.textContent = 'Cancel';
+            cancelButton.disabled = ! appointment.can_cancel;
+            cancelButton.addEventListener('click', () => openCancelModal(appointment));
+
+            if (! appointment.can_cancel) {
+                cancelButton.textContent = 'Unavailable';
+            }
+
+            actionCell.appendChild(cancelButton);
+            row.innerHTML = `
+                <td>
+                    <div class="appointment-doctor-cell">
+                        <span class="appointment-doctor-avatar">${escapeHtml(initialsFromName(doctorName))}</span>
+                        <div>
+                            <strong>${escapeHtml(doctorName)}</strong>
+                            <p>${escapeHtml(appointment.reservation_code || 'Reservation pending')}</p>
+                        </div>
+                    </div>
+                </td>
+                <td>${escapeHtml(appointment.date_label || appointment.appointment_date || 'Date pending')}</td>
+                <td>${escapeHtml(appointment.time_slot || 'Time pending')}</td>
+                <td><span class="appointment-status-badge is-${statusClass(appointment.status)}">${escapeHtml(appointment.status_label || appointment.status || 'Pending')}</span></td>
+            `;
+            row.appendChild(actionCell);
+            els.appointmentsBody.appendChild(row);
+        });
+
+        updateAppointmentsFooter();
+    }
+
+    function renderEmptyAppointments(message) {
+        els.appointmentsBody.innerHTML = '';
+        els.appointmentsEmpty.textContent = message;
+        els.appointmentsEmpty.classList.remove('is-hidden');
+        updateAppointmentsFooter();
+    }
+
+    function updateAppointmentsFooter() {
+        const total = state.appointments.length;
+        els.appointmentsFooterCount.textContent = total
+            ? `Showing 1-${total} of ${total} records`
+            : 'Showing 0 records';
+    }
+
+    function openCancelModal(appointment) {
+        if (! appointment.can_cancel) {
+            showRecordFeedback('warning', 'This appointment cannot be cancelled.');
+            return;
+        }
+
+        state.selectedAppointment = appointment;
+        els.modalSummary.textContent = `${appointment.doctor_name} on ${appointment.date_label} at ${appointment.time_slot}.`;
+        els.confirmCancel.disabled = false;
+        els.confirmCancel.textContent = 'Cancel Appointment';
+        els.modal.classList.remove('is-hidden');
+    }
+
+    function closeCancelModal() {
+        if (state.cancelling) {
+            return;
+        }
+
+        state.selectedAppointment = null;
+        els.modal.classList.add('is-hidden');
+    }
+
+    async function cancelSelectedAppointment() {
+        if (! state.selectedAppointment || state.cancelling) {
+            return;
+        }
+
+        state.cancelling = true;
+        els.confirmCancel.disabled = true;
+        els.confirmCancel.textContent = 'Cancelling...';
+
+        try {
+            const response = await recordApiRequest(`/api/reservations/${state.selectedAppointment.id}/cancel`, {
+                method: 'PATCH',
+            });
+            const cancelled = response.data?.reservation || {};
+
+            state.appointments = state.appointments.map((appointment) => {
+                if (appointment.id !== state.selectedAppointment.id) {
+                    return appointment;
+                }
+
+                return {
+                    ...appointment,
+                    ...cancelled,
+                    status: 'cancelled',
+                    status_label: 'Cancelled',
+                    can_cancel: false,
+                };
+            });
+
+            renderAppointments();
+            showRecordFeedback('success', response.message || 'Appointment cancelled successfully.');
+            state.selectedAppointment = null;
+            els.modal.classList.add('is-hidden');
+        } catch (error) {
+            showRecordFeedback('warning', error.message || 'Unable to cancel this appointment.');
+            els.confirmCancel.disabled = false;
+            els.confirmCancel.textContent = 'Cancel Appointment';
+        } finally {
+            state.cancelling = false;
+        }
+    }
+
+    function showRecordFeedback(type, message) {
+        els.feedback.className = `booking-feedback is-${type}`;
+        els.feedback.textContent = message;
+    }
+
+    async function recordApiRequest(path, options = {}) {
+        const token = localStorage.getItem('token')
+            || localStorage.getItem('auth_token')
+            || localStorage.getItem('access_token');
+
+        const response = await fetch(path, {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                ...(options.headers || {}),
+            },
+            ...options,
+        });
+
+        const payload = await response.json().catch(() => ({
+            success: false,
+            message: 'Unexpected server response.',
+            data: {},
+        }));
+
+        if (! response.ok || payload.success === false) {
+            throw new Error(payload.message || 'Request failed.');
+        }
+
+        return payload;
+    }
+
+    function statusClass(status) {
+        return String(status || 'pending').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    }
+
+    function initialsFromName(name) {
+        const parts = String(name || 'Patient').trim().split(/\s+/).filter(Boolean);
+        return `${parts[0]?.[0] || 'P'}${parts[1]?.[0] || ''}`.toUpperCase();
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, (character) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;',
+        }[character]));
+    }
+}

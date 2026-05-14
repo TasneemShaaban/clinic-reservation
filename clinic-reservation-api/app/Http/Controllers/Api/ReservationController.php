@@ -138,6 +138,82 @@ class ReservationController extends Controller
         ], 201);
     }
 
+    #[OA\Patch(
+        path: '/api/reservations/{id}/cancel',
+        operationId: 'cancelReservation',
+        tags: ['Reservations'],
+        summary: 'Cancel an appointment reservation',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+                example: 1
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Reservation cancelled successfully'),
+            new OA\Response(response: 404, description: 'Reservation not found'),
+            new OA\Response(response: 409, description: 'Reservation cannot be cancelled'),
+        ]
+    )]
+    public function cancel(int $id): JsonResponse
+    {
+        $reservation = Reservation::query()
+            ->with('doctor.user')
+            ->find($id);
+
+        if (! $reservation) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Reservation not found.',
+                'data' => [],
+            ], 404);
+        }
+
+        if (! $this->reservationHasColumn('status')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Reservation status is not available for cancellation.',
+                'data' => [],
+            ], 409);
+        }
+
+        $status = $reservation->effectiveStatus();
+
+        if ($status === 'cancelled') {
+            return response()->json([
+                'success' => false,
+                'message' => 'This appointment is already cancelled.',
+                'data' => [
+                    'reservation' => $this->formatReservation($reservation),
+                ],
+            ], 409);
+        }
+
+        if ($status === 'completed') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Completed appointments cannot be cancelled.',
+                'data' => [
+                    'reservation' => $this->formatReservation($reservation),
+                ],
+            ], 409);
+        }
+
+        $reservation->status = 'cancelled';
+        $reservation->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Appointment cancelled successfully.',
+            'data' => [
+                'reservation' => $this->formatReservation($reservation->fresh('doctor.user')),
+            ],
+        ]);
+    }
+
     private function resolvePatientId(): ?int
     {
         try {
@@ -226,7 +302,8 @@ class ReservationController extends Controller
             'appointment_date' => $date,
             'reservation_date' => $date,
             'time_slot' => $reservation->time_slot,
-            'status' => $reservation->status ?? 'confirmed',
+            'status' => $reservation->effectiveStatus(),
+            'can_cancel' => $reservation->canBeCancelled(),
             'notes' => $reservation->notes,
             'location' => $reservation->location ?: optional($doctor)->locationForBooking(),
             'consultation_fee' => $consultationFee,

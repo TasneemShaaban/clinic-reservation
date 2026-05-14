@@ -860,6 +860,583 @@
     width: 11px;
 }
 
+.record-content {
+    max-width: 1220px;
+    padding: clamp(22px, 2.6vw, 32px) clamp(22px, 2.8vw, 40px) 34px;
+    width: 100%;
+}
+
+.record-heading {
+    align-items: center;
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.record-heading p {
+    color: #475467;
+    font-size: 11px;
+    margin: 0 0 5px;
+}
+
+.record-heading span {
+    color: var(--booking-blue);
+}
+
+.record-heading h1 {
+    color: var(--booking-text);
+    font-size: clamp(24px, 2.3vw, 34px);
+    letter-spacing: 0;
+    line-height: 1.15;
+    margin: 0 0 4px;
+}
+
+.record-heading strong {
+    color: var(--booking-muted);
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.record-heading-actions {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.record-outline-button,
+.record-primary-button,
+.record-filter-button {
+    align-items: center;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 13px;
+    font-weight: 700;
+    height: 36px;
+    justify-content: center;
+}
+
+.record-outline-button {
+    background: #ffffff;
+    border: 1px solid var(--booking-border);
+    color: #344054;
+    padding: 0 15px;
+}
+
+.record-primary-button {
+    background: var(--booking-blue);
+    border: 1px solid var(--booking-blue);
+    color: #ffffff;
+    padding: 0 16px;
+}
+
+.record-grid {
+    align-items: start;
+    display: grid;
+    gap: 18px;
+    grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+    margin-bottom: 18px;
+}
+
+.record-card {
+    background: var(--booking-card);
+    border: 1px solid var(--booking-border);
+    border-radius: 7px;
+    box-shadow: var(--booking-shadow);
+    padding: 20px 22px;
+}
+
+.patient-summary-card {
+    align-items: flex-start;
+    align-self: start;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 82px minmax(0, 1fr);
+    height: auto;
+    min-height: 218px;
+    padding: 22px 24px;
+}
+
+.patient-avatar {
+    align-items: center;
+    background: linear-gradient(135deg, #e5f4ff, #d7f8ec);
+    border: 1px solid #bdd1da;
+    border-radius: 50%;
+    color: var(--booking-blue);
+    display: inline-flex;
+    font-size: 24px;
+    font-weight: 800;
+    height: 82px;
+    justify-content: center;
+    width: 82px;
+}
+
+.patient-summary-main {
+    min-width: 0;
+}
+
+.patient-summary-header {
+    align-items: flex-start;
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.patient-summary-header h2,
+.record-card h2 {
+    color: var(--booking-text);
+    font-size: clamp(18px, 1.55vw, 23px);
+    line-height: 1.2;
+    margin: 0;
+}
+
+.patient-summary-header p,
+.record-card-header p,
+.patient-facts p {
+    color: var(--booking-muted);
+    font-size: 12px;
+    margin: 4px 0 0;
+}
+
+.record-status-badge,
+.appointment-status-badge {
+    background: #eef1f6;
+    border-radius: 999px;
+    color: #344054;
+    display: inline-flex;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    padding: 7px 10px;
+    white-space: nowrap;
+}
+
+.record-status-badge.is-active,
+.appointment-status-badge.is-confirmed {
+    background: #dff8ec;
+    color: #137143;
+}
+
+.appointment-status-badge.is-completed {
+    background: #e8efff;
+    color: #1649a8;
+}
+
+.appointment-status-badge.is-cancelled {
+    background: #ffe1df;
+    color: #b42318;
+}
+
+.appointment-status-badge.is-pending {
+    background: #fff4dd;
+    color: #92400e;
+}
+
+.patient-facts {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.patient-facts div {
+    background: #fbfbff;
+    border: 1px solid var(--booking-border-soft);
+    border-radius: 5px;
+    min-width: 0;
+    padding: 12px;
+}
+
+.patient-facts span,
+.clinical-list span {
+    color: var(--booking-muted);
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.patient-facts strong,
+.clinical-list strong {
+    color: var(--booking-text);
+    display: block;
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+.patient-facts strong,
+.patient-facts p {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.clinical-card h2 {
+    border-bottom: 1px solid var(--booking-border);
+    padding-bottom: 13px;
+}
+
+.clinical-list {
+    display: grid;
+    margin-top: 6px;
+}
+
+.clinical-list div {
+    border-bottom: 1px solid var(--booking-border-soft);
+    padding: 12px 0;
+}
+
+.clinical-list div:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.clinical-list div:nth-child(n + 4) {
+    padding-top: 8px;
+}
+
+.clinical-list div:nth-child(n + 4) strong {
+    color: #526070;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.record-card-header {
+    align-items: center;
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.record-filter-button {
+    background: #ffffff;
+    border: 1px solid var(--booking-border);
+    color: #344054;
+    flex: 0 0 auto;
+    padding: 0;
+    width: 36px;
+}
+
+.appointments-table-wrap {
+    overflow-x: auto;
+}
+
+.appointments-table {
+    border-collapse: collapse;
+    min-width: 900px;
+    width: 100%;
+}
+
+.appointments-table th {
+    background: #f6f8ff;
+    color: #5f6b7d;
+    font-size: 12px;
+    letter-spacing: 0;
+    padding: 12px 14px;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.appointments-table td {
+    border-top: 1px solid var(--booking-border-soft);
+    color: var(--booking-text);
+    font-size: 14px;
+    padding: 13px 14px;
+    vertical-align: middle;
+}
+
+.appointments-table td p {
+    color: var(--booking-muted);
+    font-size: 12px;
+    margin: 3px 0 0;
+}
+
+.appointment-doctor-cell {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+    min-width: 0;
+}
+
+.appointment-doctor-avatar {
+    align-items: center;
+    background: #e7efff;
+    border: 1px solid #cddafe;
+    border-radius: 50%;
+    color: var(--booking-blue);
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: 12px;
+    font-weight: 800;
+    height: 36px;
+    justify-content: center;
+    width: 36px;
+}
+
+.appointment-doctor-cell strong {
+    display: block;
+    line-height: 1.25;
+}
+
+.appointment-action-button,
+.record-secondary-button,
+.record-danger-button {
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.appointment-action-button {
+    background: #fff4dd;
+    color: #92400e;
+    font-size: 12px;
+    min-width: 84px;
+    padding: 8px 12px;
+}
+
+.appointment-action-button:disabled {
+    background: #eef1f6;
+    color: #98a2b3;
+    cursor: not-allowed;
+}
+
+.record-empty-state {
+    background: #fbfbff;
+    border: 1px dashed var(--booking-border);
+    border-radius: 6px;
+    color: var(--booking-muted);
+    font-size: 14px;
+    margin-top: 14px;
+    padding: 18px;
+    text-align: center;
+}
+
+.appointments-footer {
+    align-items: center;
+    border-top: 1px solid var(--booking-border-soft);
+    color: var(--booking-muted);
+    display: flex;
+    font-size: 12px;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 12px;
+}
+
+.appointments-pagination {
+    display: flex;
+    gap: 6px;
+}
+
+.appointments-pagination button {
+    background: #ffffff;
+    border: 1px solid var(--booking-border);
+    border-radius: 4px;
+    color: #344054;
+    cursor: pointer;
+    height: 28px;
+    width: 28px;
+}
+
+.record-empty-state.is-hidden,
+.record-modal.is-hidden {
+    display: none;
+}
+
+.record-modal {
+    align-items: center;
+    display: flex;
+    inset: 0;
+    justify-content: center;
+    padding: 24px;
+    position: fixed;
+    z-index: 1000;
+}
+
+.record-modal-backdrop {
+    backdrop-filter: blur(1px);
+    background: rgba(15, 23, 42, 0.38);
+    inset: 0;
+    position: fixed;
+}
+
+.record-modal-panel {
+    background: #ffffff;
+    border: 1px solid #e2e5f0;
+    border-radius: 10px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.26);
+    max-width: 420px;
+    overflow: hidden;
+    padding: 0;
+    position: relative;
+    text-align: center;
+    width: min(100%, 420px);
+    z-index: 1;
+}
+
+.record-modal-icon {
+    align-items: center;
+    background: #ffe1df;
+    border: 2px solid #e11919;
+    border-radius: 50%;
+    color: #b42318;
+    display: inline-flex;
+    font-size: 20px;
+    font-weight: 800;
+    height: 48px;
+    justify-content: center;
+    margin: 28px 0 14px;
+    width: 48px;
+}
+
+.record-modal-panel h2 {
+    border-bottom: 1px solid #e2e5f0;
+    color: var(--booking-text);
+    font-size: 22px;
+    margin: 0;
+    padding: 0 28px 22px;
+}
+
+.record-modal-panel p {
+    color: #4d5668;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 22px 28px 12px;
+}
+
+.record-modal-panel strong {
+    color: #b42318;
+    display: block;
+    font-size: 13px;
+    margin: 0 28px 22px;
+}
+
+.record-modal-actions {
+    border-top: 1px solid #e2e5f0;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr 1fr;
+    padding: 18px 28px 24px;
+}
+
+.record-secondary-button {
+    background: #f3f5f9;
+    border: 1px solid #d9deea;
+    color: #344054;
+    padding: 12px 14px;
+}
+
+.record-danger-button {
+    background: #e11919;
+    border: 1px solid #e11919;
+    color: #ffffff;
+    padding: 12px 14px;
+}
+
+.record-danger-button:disabled {
+    background: #e7a4a4;
+    cursor: not-allowed;
+}
+
+@media (min-width: 1041px) {
+    .record-content {
+        max-width: 1180px;
+        padding: 28px 36px 36px;
+    }
+
+    .record-heading {
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .record-grid {
+        align-items: start;
+        gap: 24px;
+        grid-template-columns: minmax(680px, 2fr) minmax(330px, 1fr);
+        margin-bottom: 24px;
+    }
+
+    .patient-summary-card {
+        align-items: flex-start;
+        gap: 24px;
+        grid-template-columns: 88px minmax(0, 1fr);
+        min-height: 230px;
+        padding: 28px 32px;
+    }
+
+    .patient-avatar {
+        font-size: 28px;
+        height: 88px;
+        width: 88px;
+    }
+
+    .patient-summary-header {
+        margin-bottom: 24px;
+    }
+
+    .patient-summary-header h2 {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .patient-facts {
+        gap: 14px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .patient-facts div {
+        min-height: 86px;
+        padding: 16px;
+    }
+
+    .patient-facts strong {
+        font-size: 15px;
+    }
+
+    .patient-facts p {
+        max-width: 100%;
+    }
+
+    .clinical-card {
+        padding: 28px;
+    }
+
+    .clinical-card h2 {
+        font-size: 22px;
+        padding-bottom: 16px;
+    }
+
+    .clinical-list {
+        margin-top: 8px;
+    }
+
+    .clinical-list div {
+        padding: 13px 0;
+    }
+
+    .appointments-card {
+        padding: 28px;
+    }
+
+    .appointments-table {
+        min-width: 960px;
+    }
+
+    .appointments-table th {
+        padding: 13px 16px;
+    }
+
+    .appointments-table td {
+        padding: 14px 16px;
+    }
+}
+
 @media (max-width: 1040px) {
     .booking-grid {
         grid-template-columns: 1fr;
@@ -867,6 +1444,10 @@
 
     .booking-summary {
         position: static;
+    }
+
+    .record-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -908,5 +1489,28 @@
     .booking-card,
     .booking-summary {
         padding: 20px;
+    }
+
+    .record-content {
+        padding: 22px 16px;
+    }
+
+    .record-heading {
+        align-items: flex-start;
+        display: grid;
+    }
+
+    .record-heading-actions {
+        margin-left: 0;
+    }
+
+    .patient-summary-card,
+    .patient-facts,
+    .record-modal-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .patient-summary-header {
+        display: grid;
     }
 }
